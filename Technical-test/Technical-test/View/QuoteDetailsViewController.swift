@@ -28,7 +28,8 @@ class QuoteDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        title = "Quote Details"
         view.backgroundColor = .white
         addSubviews()
         setupAutolayout()

@@ -14,8 +14,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        let vc:QuotesListViewController = QuotesListViewController()
-        let nc:UINavigationController = UINavigationController(rootViewController: vc)
+        let vc = QuotesListViewController()
+        let nc = UINavigationController(rootViewController: vc)
+        nc.view.backgroundColor = .white
+        nc.setNavigationBarHidden(false, animated: false)
         
         self.window?.rootViewController = nc
         self.window?.makeKeyAndVisible()
