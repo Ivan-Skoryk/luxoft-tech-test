@@ -7,21 +7,19 @@
 
 import UIKit
 
-class QuoteDetailsViewController: UIViewController {
+final class QuoteDetailsViewController: UIViewController {
+    private var quote: Quote? = nil
+
+    var favoriteUpdateClosure: ((Quote?) -> Void)?
+
+    private let symbolLabel = UILabel()
+    private let nameLabel = UILabel()
+    private let lastLabel = UILabel()
+    private let currencyLabel = UILabel()
+    private let readableLastChangePercentLabel = UILabel()
+    private let favoriteButton = UIButton()
     
-    private var quote:Quote? = nil
-    
-    let symbolLabel = UILabel()
-    let nameLabel = UILabel()
-    let lastLabel = UILabel()
-    let currencyLabel = UILabel()
-    let readableLastChangePercentLabel = UILabel()
-    let favoriteButton = UIButton()
-    
-    
-    
-    
-    init(quote:Quote) {
+    init(quote: Quote) {
         super.init(nibName: nil, bundle: nil)
         self.quote = quote
     }
@@ -32,7 +30,8 @@ class QuoteDetailsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        title = "Quote Details"
         view.backgroundColor = .white
         addSubviews()
         setupAutolayout()
@@ -41,11 +40,9 @@ class QuoteDetailsViewController: UIViewController {
         lastLabel.text = quote?.last
         currencyLabel.text = quote?.currency
         readableLastChangePercentLabel.text = quote?.readableLastChangePercent
-        
     }
     
-    func addSubviews() {
-        
+    private func addSubviews() {
         symbolLabel.textAlignment = .center
         symbolLabel.font = .boldSystemFont(ofSize: 40)
         
@@ -64,16 +61,15 @@ class QuoteDetailsViewController: UIViewController {
         readableLastChangePercentLabel.layer.borderWidth = 1
         readableLastChangePercentLabel.layer.borderColor = UIColor.black.cgColor
         readableLastChangePercentLabel.font = .systemFont(ofSize: 30)
-        
-        favoriteButton.setTitle("Add to favorites", for: .normal)
+
+        favoriteButton.setTitle(quote?.isFavorite == true ? "Remove from favorites" : "Add to favorites", for: .normal)
         favoriteButton.layer.cornerRadius = 6
         favoriteButton.layer.masksToBounds = true
         favoriteButton.layer.borderWidth = 3
         favoriteButton.layer.borderColor = UIColor.black.cgColor
         favoriteButton.addTarget(self, action: #selector(didPressFavoriteButton), for: .touchUpInside)
         favoriteButton.setTitleColor(.black, for: .normal)
-        
-        
+
         view.addSubview(symbolLabel)
         view.addSubview(nameLabel)
         view.addSubview(lastLabel)
@@ -81,9 +77,8 @@ class QuoteDetailsViewController: UIViewController {
         view.addSubview(readableLastChangePercentLabel)
         view.addSubview(favoriteButton)
     }
-    
-    
-    func setupAutolayout() {
+
+    private func setupAutolayout() {
         symbolLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         lastLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -121,14 +116,17 @@ class QuoteDetailsViewController: UIViewController {
                         
             favoriteButton.topAnchor.constraint(equalTo: readableLastChangePercentLabel.bottomAnchor, constant: 30),
             favoriteButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            favoriteButton.widthAnchor.constraint(equalToConstant: 150),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 200),
             favoriteButton.heightAnchor.constraint(equalToConstant: 44),
-            
         ])
     }
     
-    
-    @objc func didPressFavoriteButton(_ sender:UIButton!) {
-        // TODO
+    @objc private func didPressFavoriteButton(_ sender: UIButton!) {
+        favoriteUpdateClosure?(quote)
+        quote?.isFavorite.toggle()
+
+        UIView.transition(with: favoriteButton, duration: 0.3, options: .transitionCrossDissolve) {
+            self.favoriteButton.setTitle(self.quote?.isFavorite == true ? "Remove from favorites" : "Add to favorites", for: .normal)
+        }
     }
 }
