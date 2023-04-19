@@ -45,7 +45,7 @@ final class QuotesTableViewCell: UITableViewCell {
 
     func setup(with quote: Quote) {
         nameLabel.text = quote.name
-        lastLabel.text = quote.last
+        lastLabel.text = "\(quote.last ?? "") \(quote.currency ?? "")"
         readableLastChangePercentLabel.text = quote.readableLastChangePercent
         readableLastChangePercentLabel.textColor = getColor(for: quote.variationColor)
         favoriteImageView.image = UIImage(named: quote.isFavorite ? Constants.favoriteImage : Constants.noFavoriteImage)

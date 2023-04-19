@@ -29,6 +29,8 @@ final class QuotesListViewController: UIViewController {
         return label
     }()
 
+    private var refreshControl = UIRefreshControl()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -64,10 +66,17 @@ final class QuotesListViewController: UIViewController {
 
         tableView.register(UINib(nibName: "QuotesTableViewCell", bundle: nil), forCellReuseIdentifier: Constants.cellIdentifier)
 
+        refreshControl.addTarget(self, action: #selector(refreshTableView), for: .valueChanged)
+        tableView.addSubview(refreshControl)
+
         tableView.reloadData()
     }
 
-    func fetchQuotes() {
+    @objc func refreshTableView() {
+        fetchQuotes()
+    }
+
+    private func fetchQuotes() {
         dataManager.fetchQuotes { [weak self] result in
             guard let self = self else { return }
 
@@ -76,6 +85,7 @@ final class QuotesListViewController: UIViewController {
                 self.market?.addQuotes(quotes)
 
                 DispatchQueue.main.async {
+                    self.refreshControl.endRefreshing()
                     self.tableView.isHidden = false
                     self.noDataLabel.isHidden = true
                     self.tableView.reloadData()
@@ -83,6 +93,7 @@ final class QuotesListViewController: UIViewController {
 
             case .failure(let error):
                 DispatchQueue.main.async {
+                    self.refreshControl.endRefreshing()
                     self.noDataLabel.text = error.description
                     self.noDataLabel.isHidden = false
                     self.tableView.isHidden = true
