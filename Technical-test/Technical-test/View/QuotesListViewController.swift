@@ -8,8 +8,7 @@
 import UIKit
 
 class QuotesListViewController: UIViewController {
-    
-    private let dataManager:DataManager = DataManager()
-    private var market:Market? = nil
+    private let dataManager: DataManager = DataManager()
+    private var market: Market? = nil
     
 }

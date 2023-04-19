@@ -8,8 +8,7 @@
 import UIKit
 
 class QuoteDetailsViewController: UIViewController {
-    
-    private var quote:Quote? = nil
+    private var quote: Quote? = nil
     
     let symbolLabel = UILabel()
     let nameLabel = UILabel()
@@ -18,10 +17,7 @@ class QuoteDetailsViewController: UIViewController {
     let readableLastChangePercentLabel = UILabel()
     let favoriteButton = UIButton()
     
-    
-    
-    
-    init(quote:Quote) {
+    init(quote: Quote) {
         super.init(nibName: nil, bundle: nil)
         self.quote = quote
     }
@@ -41,11 +37,9 @@ class QuoteDetailsViewController: UIViewController {
         lastLabel.text = quote?.last
         currencyLabel.text = quote?.currency
         readableLastChangePercentLabel.text = quote?.readableLastChangePercent
-        
     }
     
     func addSubviews() {
-        
         symbolLabel.textAlignment = .center
         symbolLabel.font = .boldSystemFont(ofSize: 40)
         
@@ -72,8 +66,7 @@ class QuoteDetailsViewController: UIViewController {
         favoriteButton.layer.borderColor = UIColor.black.cgColor
         favoriteButton.addTarget(self, action: #selector(didPressFavoriteButton), for: .touchUpInside)
         favoriteButton.setTitleColor(.black, for: .normal)
-        
-        
+
         view.addSubview(symbolLabel)
         view.addSubview(nameLabel)
         view.addSubview(lastLabel)
@@ -81,8 +74,7 @@ class QuoteDetailsViewController: UIViewController {
         view.addSubview(readableLastChangePercentLabel)
         view.addSubview(favoriteButton)
     }
-    
-    
+
     func setupAutolayout() {
         symbolLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -123,12 +115,10 @@ class QuoteDetailsViewController: UIViewController {
             favoriteButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
             favoriteButton.widthAnchor.constraint(equalToConstant: 150),
             favoriteButton.heightAnchor.constraint(equalToConstant: 44),
-            
         ])
     }
     
-    
-    @objc func didPressFavoriteButton(_ sender:UIButton!) {
+    @objc func didPressFavoriteButton(_ sender: UIButton!) {
         // TODO
     }
 }
