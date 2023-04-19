@@ -37,16 +37,17 @@ final class DataManager {
         request.httpMethod = "GET"
 
         URLSession.shared.dataTask(with: request) { data, response, error in
+
             if let error = error {
                 completionHandler(.failure(.networkError(description: error.localizedDescription)))
                 return
             }
 
+            
             guard
                 let response = response as? HTTPURLResponse,
                 (200..<300).contains(response.statusCode)
             else {
-                completionHandler(.failure(.networkError(description: "Internal Server Error")))
                 return
             }
 

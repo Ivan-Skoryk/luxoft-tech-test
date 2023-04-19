@@ -14,11 +14,24 @@ struct Quote: Codable {
     var readableLastChangePercent: String?
     var last: String?
     var variationColor: String?
-    var key: String?
-    var myMarket: Market?
+    var key: String
     var isFavorite: Bool = false
 
     enum CodingKeys: String, CodingKey {
         case symbol, name, currency, readableLastChangePercent, last, variationColor, key
+    }
+
+    mutating func setFavorite(_ favorite: Bool) {
+        isFavorite = favorite
+    }
+
+    mutating func toggleFavorite() {
+        isFavorite.toggle()
+
+        if isFavorite {
+            UserDefaultsManager.shared.favoriteQuotes.insert(key)
+        } else {
+            UserDefaultsManager.shared.favoriteQuotes.remove(key)
+        }
     }
 }

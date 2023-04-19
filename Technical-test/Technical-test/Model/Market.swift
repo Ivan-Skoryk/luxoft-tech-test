@@ -20,6 +20,23 @@ final class Market {
     }
 
     func addQuotes(_ quotes: [Quote]) {
-        self.quotes?.append(contentsOf: quotes)
+        self.quotes = quotes
+
+        let favs = UserDefaultsManager.shared.favoriteQuotes
+        guard quotesCount > 0 else { return }
+        for i in 0..<quotesCount {
+            if favs.contains(self.quotes![i].key) {
+                self.quotes![i].setFavorite(true)
+            }
+        }
+    }
+
+    func updateFavoriteForQuote(_ quote: Quote?) {
+        guard let quote = quote,
+              let idx = self.quotes!.firstIndex(where: { $0.key == quote.key }) else {
+            return
+        }
+
+        self.quotes![idx].toggleFavorite()
     }
 }

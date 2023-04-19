@@ -14,7 +14,20 @@ final class QuotesListViewController: UIViewController {
     private let dataManager: DataManager = DataManager()
     private var market: Market? = nil
 
-    let tableView = UITableView()
+    private let tableView = UITableView()
+    private lazy var noDataLabel: UILabel = {
+        let label = UILabel()
+        label.text = "No Data"
+
+        label.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -20),
+        ])
+        label.isHidden = true
+        return label
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,12 +38,18 @@ final class QuotesListViewController: UIViewController {
         fetchQuotes()
     }
 
-    func setupView() {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        tableView.reloadData()
+    }
+
+    private func setupView() {
         title = "Quotes List"
         view.backgroundColor = .white
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
 
@@ -50,17 +69,24 @@ final class QuotesListViewController: UIViewController {
 
     func fetchQuotes() {
         dataManager.fetchQuotes { [weak self] result in
+            guard let self = self else { return }
+
             switch result {
             case .success(let quotes):
-                guard let self = self else { return }
                 self.market?.addQuotes(quotes)
 
                 DispatchQueue.main.async {
+                    self.tableView.isHidden = false
+                    self.noDataLabel.isHidden = true
                     self.tableView.reloadData()
                 }
 
             case .failure(let error):
-                print(error.description)
+                DispatchQueue.main.async {
+                    self.noDataLabel.text = error.description
+                    self.noDataLabel.isHidden = false
+                    self.tableView.isHidden = true
+                }
             }
         }
     }
@@ -83,10 +109,14 @@ extension QuotesListViewController: UITableViewDataSource {
 
 extension QuotesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-
         guard let quote = market?.getQuote(at: indexPath.row) else { return }
         let viewController = QuoteDetailsViewController(quote: quote)
+        viewController.favoriteUpdateClosure = { [weak self] quote in
+            self?.market?.updateFavoriteForQuote(quote)
+            self?.tableView.reloadData()
+        }
         navigationController?.pushViewController(viewController, animated: true)
+
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
